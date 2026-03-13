@@ -1,2 +1,1 @@
-# sample-code
-Test Code for evaluation
+This standalone script creates a REST API endpoint that validates input, fetches content from any data source (DB/file/API), normalizes it to clean JSON, and handles errors gracefully. Works in any PHP environment.
