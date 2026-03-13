@@ -3,55 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PHP REST API Demo - Content Fetcher</title>
+    <title>PHP API Demo</title>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; max-width: 800px; margin: 2rem auto; padding: 1rem; }
-        button { background: #007cba; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 4px; cursor: pointer; font-size: 1rem; }
-        button:hover { background: #005a87; }
-        pre { background: #f4f4f4; padding: 1rem; border-radius: 4px; overflow: auto; white-space: pre-wrap; }
-        .status { margin: 1rem 0; padding: 0.5rem; border-radius: 4px; }
-        .success { background: #d4edda; color: #155724; }
-        .error { background: #f8d7da; color: #721c24; }
+        body{font-family:system-ui,max-width:700px;margin:2rem auto;padding:1rem;line-height:1.5}
+        button{background:#007cba;color:white;border:0;padding:.75rem 1.5rem;border-radius:4px;cursor:pointer;font-size:1rem;margin:.25rem}
+        button:hover{background:#005a87}
+        pre{background:#f4f4f4;padding:1rem;border-radius:4px;overflow:auto;white-space:pre-wrap;font-size:.9rem}
+        .status{margin:1rem 0;padding:.5rem;border-radius:4px}
+        .success{background:#d4edda;color:#155724}
+        .error{background:#f8d7da;color:#721c24}
+        h1{font-size:1.75rem}
     </style>
 </head>
 <body>
     <h1>🛠️ PHP REST API Demo</h1>
-    <p>Click below to test the custom API endpoint. Fetches & normalizes content via <code>GET /api/v1/content/articles</code>.</p>
+    <p>Test the custom endpoint live. Fetches normalized content JSON.</p>
     
-    <button onclick="fetchData('articles', 3)">Load Articles (3 items)</button>
-    <button onclick="fetchData('news', 2)">Load News (2 items)</button>
-    <button onclick="fetchInvalid()">Test Error Case</button>
+    <button onclick="fetchData('articles',3)">📄 Articles (3)</button>
+    <button onclick="fetchData('news',2)">📰 News (2)</button>
+    <button onclick="fetchInvalid()">❌ Error Test</button>
     
     <div id="status"></div>
-    <pre id="output">Click a button to see JSON response...</pre>
+    <pre id="output">Click button to test API →</pre>
 
     <script>
-    async function fetchData(type, perPage = 5) {
-        const statusEl = document.getElementById('status');
-        const outputEl = document.getElementById('output');
-        
-        statusEl.innerHTML = '<div class="status">Loading...</div>';
-        
-        try {
-            const url = `api-content-handler.php/api/v1/content/${type}?per_page=${perPage}`;
-            const response = await fetch(url);
-            
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-            }
-            
-            const data = await response.json();
-            outputEl.textContent = JSON.stringify(data, null, 2);
-            statusEl.innerHTML = `<div class="status success">✅ Success: Loaded ${data.length} items from ${type}</div>`;
-        } catch (error) {
-            outputEl.textContent = JSON.stringify({ error: error.message }, null, 2);
-            statusEl.innerHTML = `<div class="status error">❌ ${error.message}</div>`;
+    async function fetchData(type, perPage=5){
+        document.getElementById('status').innerHTML='<div class="status">Loading...</div>';
+        try{
+            // FIXED: Exact path to api.php
+            const url=`./api.php/content/${type}?per_page=${perPage}`;
+            const res=await fetch(url);
+            const data=await res.json();
+            document.getElementById('output').textContent=JSON.stringify(data,null,2);
+            document.getElementById('status').innerHTML=`<div class="status success">✅ ${data.length||0} items from ${type}</div>`;
+        }catch(e){
+            document.getElementById('output').textContent=JSON.stringify({error:e.message},null,2);
+            document.getElementById('status').innerHTML=`<div class="status error">❌ ${e.message}</div>`;
         }
     }
-    
-    async function fetchInvalid() {
-        await fetchData('invalid-type!!!');
-    }
+    async function fetchInvalid(){await fetchData('invalid!!!')}
     </script>
 </body>
 </html>
